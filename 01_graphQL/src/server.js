@@ -8,7 +8,7 @@ const {AuthDirective}= require ("./services/AuthDirective");
 
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb+srv://EiichiMS:chorrillo@eiichim-ossme.mongodb.net/test?retryWrites=true&w=majority", { useNewUrlParser: true }, (err) => {
+mongoose.connect(process.env.URL, { useNewUrlParser: true }, (err) => {
     if (!err) { console.log('Conectado a Mongo'); }
 })
 

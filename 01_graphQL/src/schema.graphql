@@ -1,7 +1,8 @@
 scalar Date
+directive @auth on FIELD_DEFINITION | FIELD
 
 type Query {
-    getAllEvents:[Event]
+    getAllEvents:[Event]!@auth
     getIdEvent(id:ID):Event
 }
 
