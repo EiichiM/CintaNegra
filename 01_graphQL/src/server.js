@@ -1,17 +1,47 @@
-const { GraphQLServer } = require("graphql-yoga");
-const { importSchema } = require("graphql-import");
-const typeDefs = importSchema("./schema.graphql")
+require('dotenv').config();
+const { GraphQLServer } = require('graphql-yoga');
+const { importSchema } = require('graphql-import');
+const {makeExecutableSchema}= require("graphql-tools")
+const typeDefs = importSchema('src/schema.graphql');
+const verifyToken = require("./services/verifyToken");
+const {AuthDirective}= require ("./services/AuthDirective");
+
+const mongoose = require("mongoose");
+
+mongoose.connect("mongodb+srv://EiichiMS:chorrillo@eiichim-ossme.mongodb.net/test?retryWrites=true&w=majority", { useNewUrlParser: true }, (err) => {
+    if (!err) { console.log('Conectado a Mongo'); }
+})
+
+//Mutations
+const { createUser, login } = require('./resolvers/Mutations/auth');
+const { createEvent } = require('./resolvers/Mutations/events');
+
+//Querys
+const { getAllEvents, getIdEvent } = require("./resolvers/Querys/event");
 
 
 const resolvers = {
     Query: {
-        saludo: (root, args) => `Hola ${args.name}`
+        getAllEvents,
+        getIdEvent
     },
     Mutation: {
-        persona: (root, args) => args.edad
+        createUser,
+        login,
+        createEvent
     }
 }
 
-
-const server = new GraphQLServer({ typeDefs, resolvers })
-server.start(() => console.log(`GraphQL esta corriendo`))
+const schema = makeExecutableSchema ({
+    typeDefs,
+    resolvers,
+    schemaDirectives:{
+        auth : AuthDirective
+    }
+})
+const server = new GraphQLServer({
+    typeDefs,
+    resolvers,
+    context: async ({ request }) => verifyToken(request)
+})
+server.start(() => console.log('Graphql corriendo en puerto: 4000'))
