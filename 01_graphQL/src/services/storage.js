@@ -1,8 +1,9 @@
 const cloudinary = require("cloudinary");
+require('dotenv').config();
 
 const storage = ({ stream }) => {
     cloudinary.config({
-        cloud_name: process.env.CLOUD_N,
+        cloud_name: process.env.CLOUDE_N,
         api_key: process.env.CLOUDE_API_K,
         api_secret: process.env.CLOUDE_API_SECRET
     });

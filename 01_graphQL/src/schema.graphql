@@ -1,4 +1,8 @@
 scalar Date
+scalar Upload
+scalar String
+
+
 directive @auth on FIELD_DEFINITION | FIELD
 
 type Query {
@@ -9,7 +13,8 @@ type Query {
 type Mutation {
     createUser(user:inputUser!):User
     login(user:inputLogin!):Auth!
-    createEvent(data:inputEvent):Event
+    createEvent(event:inputEvent!):Event! @auth
+    addPhoto(photo:Upload!):String @auth
 }
 
 type User {
@@ -19,6 +24,7 @@ type User {
 }
 
 type Auth {
+    status:String!
     token:String!
 }
 

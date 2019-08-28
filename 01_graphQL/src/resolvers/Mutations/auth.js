@@ -1,6 +1,7 @@
 const bcrypt = require ("bcrypt-nodejs");
 const User = require('../../models/Users');
 const jwt = require("jsonwebtoken");
+const storage = require("../../services/storage")
 
 const createUser = async (obj, args) =>{
    const params = args.user;
@@ -44,7 +45,20 @@ const login = async (obj, args)=>{
        }
    }
 }
+const addPhoto =async ( obj, args, context)=>{
+    console.log(context)
+    const id = context.user._id
+    if (args.photo){
+        const {createReadStream}=await args.photo;
+        const stream = createReadStream();
+        const {url} = await storage({stream});
+        console.log(url);
+        await User.findByIdAndUpdate(id, {$set: {avatar: url.url}})
+        return url;
+    }
+}
 module.exports={
    createUser,
-   login
+   login,
+   addPhoto
 }

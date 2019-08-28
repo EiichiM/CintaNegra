@@ -13,7 +13,7 @@ mongoose.connect(process.env.URL, { useNewUrlParser: true }, (err) => {
 })
 
 //Mutations
-const { createUser, login } = require('./resolvers/Mutations/auth');
+const { createUser, login, addPhoto } = require('./resolvers/Mutations/auth');
 const { createEvent } = require('./resolvers/Mutations/events');
 
 //Querys
@@ -28,7 +28,8 @@ const resolvers = {
     Mutation: {
         createUser,
         login,
-        createEvent
+        createEvent,
+        addPhoto
     }
 }
 
@@ -44,4 +45,9 @@ const server = new GraphQLServer({
     resolvers,
     context: async ({ request }) => verifyToken(request)
 })
-server.start(() => console.log('Graphql corriendo en puerto: 4000'))
+
+const options ={
+    port:process.env.PORT || 4000,
+    cors: {"origin":"*"}
+}
+server.start(options,({port}) => console.log(`Graphql corriendo en puerto: ${port}`))
